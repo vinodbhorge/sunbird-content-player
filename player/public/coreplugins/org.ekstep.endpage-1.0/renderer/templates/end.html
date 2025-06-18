@@ -1,94 +1,187 @@
-
-<div class="font-lato gc-ep-cont" ng-controller="endPageController" id='endpage' ng-show="showEndPage">
-    <image class="gc-ep-cont-background" ng-src="{{imageBasePath}}background_1.png" />
-    <genie class="gc-ep-home"></genie>
-    <div class="gc-ep-content">
-        <p class="gc-ep-cong gc-text-elipsis">{{AppLables.congratulations}}</p>
-        <p class="icon-font gc-ep-title gc-text-elipsis" ng-if="content.name">{{content.name}}</p>
-        <p class="gc-content-owner gc-text-elipsis" ng-if="content.owner">{{ AppLables.author }}: {{content.owner}}</p>
-    </div>
-    <center class="gc-ep-credits" ng-hide="content.imageCredits == null && content.voiceCredits == null && content.soundCredits == null ">
-        <input class="gc-btn-credits btn-normal" role="button" type="button" ng-click="showCredits()" />
-    </center>
-    <div class="gc-ep-content-holder">
-        <div class="gc-ep-assessment-cont">
-            <div class="gc-ep-rating-cont">
-                <div class="gc-ep-rating" ng-if="!showFeedbackPopup">
-                    <p>{{AppLables.scores}}</p>
-                    <star-rating empty-rating="icn_credit_star.png" tabindex="0" aria-label="Show Feedback" selected-rating="filled_star.png" rating="userRating" read-only="false" max-rating="5"  click="showFeedback(param)"></star-rating>
-                </div>
-            </div>
-            <div class="gc-ep-time-score" ng-show="showFeedbackArea">
-                <div ng-class="showScore ? 'gc-ep-time ' : 'gc-ep-time-mid '" tabindex="0" aria-label="{{totalTimeSpent}}" id="timeSpentArea" role="contentinfo">
-                    <image ng-class="showScore ? 'img-float-left':'img-float-mid' " ng-src="{{imageBasePath}}icn_watch.png" style="position:relative;" />
-                    <p class="gc-white-text gc-ep-white-title">{{totalTimeSpent}}</p>
-                </div>
-                <div class="gc-ep-score" ng-show="showScore"  tabindex="0" role="contentinfo"  aria-label="{{totalScore}}">
-                    <image ng-src="{{imageBasePath}}icn_trophy.png" />
-                    <p class="gc-white-text gc-ep-white-title">{{totalScore}}</p>
-                </div>
-            </div>
-            <div class="gc-ep-footer">
-                <div ng-click="replayContent()" role="button" aria-label="{{AppLables.replay}}" tabindex="0" class="gc-ep-footer-icons gc-ep-replay">
-                    <img class="replay" ng-src="{{imageBasePath}}icn_replay.png" />
-                    <p>{{AppLables.replay}}</p>
-                </div>
-                <div ng-if="showUser"  role="button" aria-label="{{currentUser.handle}} {{AppLables.change}} " tabindex="0" ng-click="ep_openUserSwitchingModal()" class="gc-ep-footer-icons gc-ep-userSwitch">
-                    <img class="user" ng-src="{{currentUser.profileImage}}" />
-                    <p><b>{{currentUser.handle}}</b>
-                        <br/> <small> {{AppLables.change}} </small></p>
-                </div>
-            </div>
-        </div>
-        <div class="gc-ep-related-cont" ng-controller="RelatedContentCtrl">
-            <div class="gc-ep-next" tabindex="0">
-                <p class="gc-ep-related-cont-next gc-text-elipsis">{{ AppLables.nextContent }}</p>
-            </div>
-            <div id="endPageLoader" class="gc-ep-loader">
-                <div style="margin-top: 20%;">
-                    <ion-spinner icon="bubbles"></ion-spinner>
-                </div>
-            </div>
-            <div class="gc-related-cont" ng-show="showRelatedContent">
-                <div class="gc-related-list" tabindex="0" ng-repeat="story in relatedContents" ng-click="playRelatedContent(story, $index);">
-                    <div class="gc-related-item">
-                        <p class="gc-text-elipsis gc-related-cont-title">{{story.name}}</p>
-                        <div class="gc-rel-content-img">
-                            <img class="img-center" fallback-src="{{imageBasePath}}icn_default-content.png" ng-src="{{story.appIcon}}" />
-                            <div class="gc-repeat-content">
-                                <img ng-src="assets/icons/icn_play.png" />
+<div class="font-lato gc-ep-cont" ng-app="sunbird-endpage" ng-controller="endPageController"     id='endpage' ng-show="showEndPage">
+    <div ng-switch="templateToRender">
+        <!-- Self access view start -->
+        <div ng-switch-when="assessment">
+            <div class="ps-wrapper">
+                <div class="ps-content">
+                    <div class="ps-body">
+                        <div class="ps-nav left contentButton" ng-class="previousContent[content.identifier] ? 'buttonVisible' : 'buttonHide'" ng-click="contentLaunch('previous',content.identifier)">
+                            <a class="ps-nav-header textdeco-none">
+                                <img ng-src="{{leftArrowIcon}}" alt="prev" class="ps-arrow">
+                                <div class="ps-nav-wrappe ps-text-right">
+                                    <p class="ps-nav-subtitle">{{AppLabels.goTo || "Go To"}}</p>
+                                    <h2 class="ps-nav-title">{{AppLabels.previous || "Previous"}}</h2>
+                                </div>
+                            </a>
+                            <div class="ps-nav-body ps-text-right">
+                                <p class="ps-chapter-text chapter-section multiline-ellipsis ellipsis-three-line" >{{ previousContent[content.identifier].content.contentData.name.length > 40 ? previousContent[content.identifier].content.contentData.name.substring(0,40)+"..." : previousContent[content.identifier].content.contentData.name}}</p>
+                            </div>
+                        </div>
+                        <div class="assessment-content assessment-score-content">
+                            <div class="assessment-content-title" ng-if="displayScore">{{AppLabels.yourScoreIs || "Your score is"}} {{userScore}}/{{totalScore}}</div>
+                            <div class="assessment-content-description">
+                                <div ng-if="displayScore" class="text-center">
+                                    {{AppLabels.redoTheAssessment || "You can redo the assessment to improve your score."}}
+                                </div>
+                                <div ng-if="!displayScore" class="text-center">
+                                    {{AppLabels.responsesHaveBeenRecorded || "Your responses have been recorded."}}
+                                </div>
+                            </div>
+                            <div class="assessment-action-buttons mt-24">
+                                <button class="sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-responsive mr-24" ng-click="replayContent()"> {{AppLabels.redo || "Redo"}}</button>
+                                </button>
+                                <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-responsive" ng-show="isCordova" ng-click="openGenie()">{{AppLabels.exit || "Exit"}} </button>
+                            </div>
+                        </div>
+                        <div class="ps-nav right contentButton" ng-class="nextContent[content.identifier] ? 'buttonVisible' : 'buttonHide'" ng-click="contentLaunch('next',content.identifier)">
+                            <a class="ps-nav-header textdeco-none">
+                                <div class="ps-nav-wrapper">
+                                    <p class="ps-nav-subtitle">{{AppLabels.goTo || "Go To"}}</p>
+                                    <h2 class="ps-nav-title">{{AppLabels.next || "Next"}}</h2>
+                                </div>
+                                <img ng-src="{{rightArrowIcon}}" alt="prev" class="ps-arrow">
+                            </a>
+                            <div class="ps-nav-body ps-text-left">
+                                <p class="ps-chapter-text chapter-section multiline-ellipsis ellipsis-three-line">{{ nextContent[content.identifier].content.contentData.name.length > 40 ? nextContent[content.identifier].content.contentData.name.substring(0,40)+"..." : nextContent[content.identifier].content.contentData.name}}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <popup id="creditsPopup" ng-show = 'CreditPopup' popup-body="creditsBody"></popup>
-    <div id="gcFbPopup" class="popup" ng-if="showFeedbackPopup">
-        <div class="popup-overlay" ng-click="hideFeedback()"></div>
-        <div class="gc-popup-new gc-fc-popup">
-            <div class="gc-popup-title-new">{{AppLables.feedback}}</div>
-            <div class="gc-popup-body-new">
-                <div class="gc-feedback-popup">
-                    <div star-rating tabindex="0" empty-rating="star_inactive.png" selected-rating="star_active.png" rating="popUserRating" read-only="false" max-rating="5" click="updatePopUserRating(param)"></div>
-                    <div class="gc-fd-comments">
-                        <div class="gc-fd-title">
-                            <p>{{AppLables.comment}}</p>
+        <!-- Self access view End -->
+        <!-- Other content type start-->
+        <div ng-switch-default>
+            <div class="ps-wrapper">
+                <div class="ps-content">
+                    <div class="ps-header">
+                        <h2 class="ps-heading">{{AppLabels.youJustCompleted || "You just completed"}}</h2>
+                        <p class="ps-subheading" ng-if="content.name">{{content.name}}</p>
+                        <p class="ps-author" ng-if="content.owner">{{AppLabels.author || "Author"}}: <span>{{content.owner}}</span></p>
+                    </div>
+                    <div class="ps-body">
+                        <div class="ps-nav left contentButton" ng-class="previousContent[content.identifier] ? 'buttonVisible' : 'buttonHide'" ng-click="contentLaunch('previous',content.identifier)">
+                            <a class="ps-nav-header textdeco-none">
+                                <img ng-src="{{leftArrowIcon}}" alt="prev" class="ps-arrow">
+                                <div class="ps-nav-wrappe ps-text-right">
+                                    <p class="ps-nav-subtitle">{{AppLabels.goTo}}</p>
+                                    <h2 class="ps-nav-title">{{AppLabels.previous}}</h2>
+                                </div>
+                            </a>
+                            <div class="ps-nav-body ps-text-right">
+                                <p class="ps-chapter-text chapter-section multiline-ellipsis ellipsis-three-line">{{ previousContent[content.identifier].content.contentData.name.length > 40 ? previousContent[content.identifier].content.contentData.name.substring(0,40)+"..." : previousContent[content.identifier].content.contentData.name}}</p>
+                            </div>
                         </div>
-                        <textarea class="gc-fd-text" tabindex="0" ng-keyup="commentLength()" autofocus id="commentText"></textarea>
-                        <div class="gc-fd-commentInfo">
-                            <p>{{stringLeft}}</p>
+                        <div class="ps-score">
+                            <div class="ps-score-content" ng-switch="scoreDisplayConfig">
+                                <ul ng-switch-when="ScoreObtained" class="ps-score-list">
+                                    <li ng-if="(userScore >= 0) && totalScore" class="ps-score-list__item">
+                                        <div class="ps-score-item">
+                                            <img ng-src="{{scoreIcon}}" class="ps-score-icon">
+                                            <div class="ps-score-detail">
+                                                <h2 class="ps-score-heading">{{AppLabels.score || "SCORE"}}</h2>
+                                                <ul>
+                                                    <li class="ps-score-data endpage-score ps-score-data-padding-top">{{userScore}}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="ps-vertical-line">
+                                        <div class="vertical-line"></div>
+                                    </li>
+                                    <li class="ps-score-list__item">
+                                        <div class="ps-score-item">
+                                            <img ng-src="{{clockIcon}}" class="ps-score-icon">
+                                            <div class="ps-score-detail">
+                                                <h2 class="ps-score-heading">{{AppLabels.time || "TIME"}}</h2>
+                                                <p class="ps-score-data">{{totalTimeSpent}}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul ng-switch-when="No" class="ps-score-list">
+                                    <li class="ps-score-list__item">
+                                        <div class="ps-score-item">
+                                            <img ng-src="{{clockIcon}}" class="ps-score-icon">
+                                            <div class="ps-score-detail">
+                                                <h2 class="ps-score-heading">{{AppLabels.time || "TIME"}}</h2>
+                                                <p class="ps-score-data">{{totalTimeSpent}}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul ng-switch-default class="ps-score-list">
+                                    <li ng-if="(userScore >= 0) && totalScore" class="ps-score-list__item">
+                                        <div class="ps-score-item">
+                                            <img ng-src="{{scoreIcon}}" class="ps-score-icon">
+                                            <div class="ps-score-detail">
+                                                <h2 class="ps-score-heading">{{AppLabels.score || "SCORE"}}</h2>
+                                                <ul>
+                                                    <li class="ps-score-data endpage-score ps-score-data-padding-top">{{userScore}}</li>
+                                                    <li class="ui divider ps-score-divider"></li>
+                                                    <li class="ps-score-data endpage-score ps-score-data-padding-top">{{totalScore}}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="ps-vertical-line">
+                                        <div class="vertical-line"></div>
+                                    </li>
+                                    <li class="ps-score-list__item">
+                                        <div class="ps-score-item">
+                                            <img ng-src="{{clockIcon}}" class="ps-score-icon">
+                                            <div class="ps-score-detail">
+                                                <h2 class="ps-score-heading">{{AppLabels.time || "TIME"}}</h2>
+                                                <p class="ps-score-data">{{totalTimeSpent}}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="ps-nav right contentButton" ng-class="nextContent[content.identifier] ? 'buttonVisible' : 'buttonHide'" ng-click="contentLaunch('next',content.identifier)">
+                            <a class="ps-nav-header textdeco-none">
+                                <div class="ps-nav-wrapper">
+                                    <p class="ps-nav-subtitle">{{AppLabels.goTo || "Go To"}}</p>
+                                    <h2 class="ps-nav-title">{{AppLabels.next || "Next"}}</h2>
+                                </div>
+                                <img ng-src="{{rightArrowIcon}}" alt="prev" class="ps-arrow">
+                            </a>
+                            <div class="ps-nav-body ps-text-left">
+                                <p class="ps-chapter-text chapter-section multiline-ellipsis ellipsis-three-line">{{ nextContent[content.identifier].content.contentData.name.length > 40 ? nextContent[content.identifier].content.contentData.name.substring(0,40)+"..." : nextContent[content.identifier].content.contentData.name}}</p>
+                            </div>
                         </div>
                     </div>
-                    <div ng-class="enableFeedBackButton  ? 'gc-fd-footer icon-opacity' : 'gc-fd-footer'">
-                        <input class="btn-black" type="submit" value="{{AppLables.submit}}" ng-click="submitFeedback()">
+                    <div class="ps-actions">
+                        <ul class="ps-action-list">
+                            <!-- <li class="ps-action-list__item">
+                                <a href="javascript:void(0);" class="ps-btn ps-btn--orange endpage-icons" ng-click="replayContent()">
+                                    <img ng-src="{{replayIcon}}" class="ps-btn-icon">
+                                </a>
+                                <p class="ps-action-text">{{AppLabels.replay || "Replay"}}</p>
+                            </li> -->
+                            <li class="ps-action-list__item"><a class="ps-btn ps-btn--blue"><span class="user-name">{{currentPlayerFirstChar}}</span></a>
+                                <div class="ps-action-data">
+                                    <p class="ps-action-text">{{currentPlayer}}</p>
+                                </div>
+                            </li>
+                            <!-- <li ng-if="!isCordova" class="ps-action-list__item">
+                                <a class="ps-btn ps-btn--black"><img ng-src="{{genieIcon}}" class="ps-exit-icon"></a>
+                                <p class="ps-action-text">{{AppLabels.exit || "Exit"}}</p>
+                            </li> -->
+                            <!-- <li ng-if="isCordova" class="ps-action-list__item" ng-click="openGenie()">
+                                <a href="javascript:void(0);" class="ps-btn ps-btn--black"><img ng-src="{{genieIcon}}" class="ps-exit-icon"></a>
+                                <p class="ps-action-text">{{AppLabels.exit || "Exit"}}</p>
+                            </li> -->
+                        </ul>
+                    </div>
+                    <div class="ps-footer">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="end-license">
-        <b>License: {{licenseAttribute}}</b>
+
+        <!-- Other content type start-->
     </div>
 </div>
+<sunbird-userswitcher></sunbird-userswitcher>
