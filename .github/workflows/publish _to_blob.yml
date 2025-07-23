@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Build and Upload to GCP
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -57,9 +57,9 @@ jobs:
         working-directory: player
         run: npm run build-preview ekstep
 
-      - name: Compress preview
-        working-directory: player
-        run: grunt compress:preview
+    #   - name: Compress preview
+    #     working-directory: player
+    #     run: grunt compress:preview
 
       - name: Generate libs
         working-directory: player
@@ -75,5 +75,5 @@ jobs:
     #     run: |
     #         echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/service-account-key.json
     #         gcloud auth activate-service-account --key-file=/tmp/service-account-key.json
-    #         gsutil -m cp -r . gs://${{ env.GCP_BUCKET }}/content-plugins/
+    #         gsutil -m cp -r player/www/* gs://${{ env.GCP_BUCKET }}/v3/
     #         rm -f /tmp/service-account-key.json
