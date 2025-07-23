@@ -8,7 +8,8 @@ on:
 jobs:
   build-and-upload:
     name: Build and Upload to GCP
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04  # ← switched from ubuntu-latest to ubuntu-20.04
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,20 +19,12 @@ jobs:
         with:
           node-version: 10.16.3
 
-      - name: Install Python 2 manually
+      - name: Install Python 2
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget make gcc libssl-dev zlib1g-dev libbz2-dev \
-                                  libreadline-dev libsqlite3-dev libffi-dev
-          wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
-          tar -xzf Python-2.7.18.tgz
-          cd Python-2.7.18
-          ./configure --enable-optimizations
-          make -j2
-          sudo make altinstall
-          sudo ln -sf /usr/local/bin/python2.7 /usr/bin/python
+          sudo apt-get install -y python2
+          sudo ln -sf /usr/bin/python2 /usr/bin/python
 
-                      
       - name: Set npm python config
         run: npm config set python /usr/bin/python
 
@@ -51,11 +44,11 @@ jobs:
           cd ./www/preview
           ls -la
 
-
-    #   - name: Authenticate and Upload to Google Cloud Storage
-    #     if: env.CLOUD_PROVIDER == 'gcp'
-    #     run: |
-    #         echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/service-account-key.json
-    #         gcloud auth activate-service-account --key-file=/tmp/service-account-key.json
-    #         gsutil -m cp -r player/www/* gs://${{ env.GCP_BUCKET }}/v3/
-    #         rm -f /tmp/service-account-key.json
+    # Uncomment and edit this block to enable GCP upload
+    # - name: Authenticate and Upload to Google Cloud Storage
+    #   if: env.CLOUD_PROVIDER == 'gcp'
+    #   run: |
+    #     echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/service-account-key.json
+    #     gcloud auth activate-service-account --key-file=/tmp/service-account-key.json
+    #     gsutil -m cp -r player/www/* gs://${{ env.GCP_BUCKET }}/v3/
+    #     rm -f /tmp/service-account-key.json
