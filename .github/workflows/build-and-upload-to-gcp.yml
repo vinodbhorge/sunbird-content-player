@@ -3,7 +3,7 @@ name: Build and Upload to GCP
 on:
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   build-and-upload:
