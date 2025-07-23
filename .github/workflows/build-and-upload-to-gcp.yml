@@ -24,6 +24,10 @@ jobs:
         working-directory: ./player
         run: npm install --legacy-peer-deps
 
+      - name: Clean Build Artifacts
+        working-directory: ./player
+        run: npm install --no-save rimraf && ./node_modules/.bin/rimraf ./public/player-build ./www
+
       - name: Build Project
         working-directory: ./player
         run: |
