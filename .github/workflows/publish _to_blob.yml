@@ -25,6 +25,12 @@ jobs:
         working-directory: player
         run: npm i --legacy-peer-deps
 
+      - name: Clean previous build
+        working-directory: player
+        run: |
+          npm install --no-save rimraf
+          ./node_modules/.bin/rimraf ./public/player-build ./www
+
       - name: Build preview
         working-directory: player
         run: npm run build-preview ekstep
