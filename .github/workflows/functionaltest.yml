@@ -5,7 +5,7 @@
 name: Sunbird-Content-Player-Functional-Test
 
 # Trigger the workflow on push or pull request
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-22.04
