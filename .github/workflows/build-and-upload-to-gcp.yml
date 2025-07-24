@@ -29,7 +29,8 @@ jobs:
 
       - name: Install Dependencies
         working-directory: player
-        run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --verbose
+        timeout-minutes: 15
 
       - name: Build preview
         working-directory: player
