@@ -1,6 +1,6 @@
 {
     "name": "@project-fmps/content-player",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Which renders the contents in both web and devices",
     "dependencies": {
         "@project-sunbird/telemetry-sdk": "^0.0.14",
