@@ -52,7 +52,7 @@
         "grunt-rename": "*",
         "grunt-string-replace": "*",
         "grunt-text-replace": "*",
-        "gulp": "^3.9.1",
+        "gulp": "^5.0.1",
         "html-loader": "^0.5.5",
         "html-minifier": "^3.5.18",
         "html-minifier-loader": "^1.4.1",
