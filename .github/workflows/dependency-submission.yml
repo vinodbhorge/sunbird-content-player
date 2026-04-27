@@ -22,11 +22,13 @@ jobs:
 
       - name: Install dependencies
         working-directory: player
-        run: npm ci
+        run: npm install --legacy-peer-deps
+
+      - name: Install Syft
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Generate SPDX SBOM
-        working-directory: player
-        run: npm sbom --sbom-format spdx > ../player.spdx.json
+        run: syft dir:player --output spdx-json=player.spdx.json
 
       - name: Submit npm Dependencies via SPDX
         uses: advanced-security/spdx-dependency-submission-action@v0.2.0
