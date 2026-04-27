@@ -20,9 +20,9 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Generate fresh package-lock.json
         working-directory: player
-        run: npm install --legacy-peer-deps
+        run: npm install --package-lock-only --legacy-peer-deps
 
       - name: Install Syft
         run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
