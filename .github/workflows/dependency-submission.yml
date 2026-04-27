@@ -20,11 +20,15 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies (ci install for full lock resolution)
+      - name: Install dependencies
         working-directory: player
         run: npm ci
 
-      - name: Submit npm Dependencies
-        uses: actions/dependency-review-action@v4
+      - name: Generate SPDX SBOM
+        working-directory: player
+        run: npm sbom --sbom-format spdx > ../player.spdx.json
+
+      - name: Submit npm Dependencies via SPDX
+        uses: advanced-security/spdx-dependency-submission-action@v0.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
